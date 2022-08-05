@@ -65,15 +65,15 @@ python script.py
 <h2 name="RepositoryContent">Repository content</h3>
 <p align="justify">
 <ul>
-	<li><p align="justify"><a href="posterior_parietal_cortex.py">posterior_parietal_cortex.py</a>: </p></li>
-	<li><p align="justify"><a href="real_time_map_and_nav_app.py">real_time_map_and_nav_app.py</a>: </p></li>
-	<li><p align="justify"><a href="memory_sweep.py">memory_sweep.py</a>: </p></li>
-	<li><p align="justify"><a href="plot.py">plot.py</a>: </p></li>
-	<li><p align="justify"><a href="results/">results</a> folder: </p></li>
-	<li><p align="justify"><a href="robot/">robot</a> folder: </p></li>
+	<li><p align="justify"><a href="posterior_parietal_cortex.py">posterior_parietal_cortex.py</a>: class that is responsible for the construction of the PPC module. This module has comparison inputs to which it reacts to generate output and the start-of-operation input that indicates when the hippocampal read cycle begins. It contains the necessary code so that when executed on its own, it generates the example plot of operation of the module itself.</p></li>
+	<li><p align="justify"><a href="real_time_map_and_nav_app.py">real_time_map_and_nav_app.py</a>: script in charge of generating the navigation and pseudomapping system. Instantiates the previously existing hippocampus and PPC modules, generating the necessary connections to develop the complete system. The inputs and outputs of the system are defined for direct real-time operation, so both the software simulations and the demo use the same code.</p></li>
+	<li><p align="justify"><a href="memory_sweep.py">memory_sweep.py</a>: a set of functions that calculate the input to be given to the system in order to perform a memory sweep to reconstruct the initial and/or final state of the grid map.</p></li>
+	<li><p align="justify"><a href="plot.py">plot.py</a>: functions needed to generate the plots used to understand the correct functioning of the system and in the article.</p></li>
+	<li><p align="justify"><a href="results/">results</a> folder: where the data and plots of the different simulations of the whole system are stored, as well as a demonstration of the operation of the PPC (posterior parietal cortex module) separately. These files contain the initial and final map in both a compact format for use in the code and in a more "user-friendly" and visual format for easy viewing by the user. They also contain the weights of the memory synapses after the simulation, i.e. the contents of the memory with the pseudomapping of the environment. Finally, it includes other files with the activity at the spike level of the memory and the PPC for the subsequent reconstruction of the desired plots.</p></li>
+	<li><p align="justify"><a href="robot/">robot</a> folder: code of the robotic system in order to carry out the demo. The robotic system is divided into two boards and therefore two codes:</p></li>
 		<ul>
-			<li><p align="justify"><a href="robot/robot_control/robot_control.ino">robot_control.ino</a>: </p></li>
-			<li><p align="justify"><a href="robot/robot_wifi_redirect_udp/robot_wifi_redirect_udp.ino">robot_wifi_redirect_udp.ino</a>: </p></li>
+			<li><p align="justify"><a href="robot/robot_control/robot_control.ino">robot_control.ino</a>: is responsible for motor control and collection of ultrasound measurements of the environment under explicit commands.</p></li>
+			<li><p align="justify"><a href="robot/robot_wifi_redirect_udp/robot_wifi_redirect_udp.ino">robot_wifi_redirect_udp.ino</a>: in charge of the wifi communication between the robot and SpiNNaker. To do this, it generates a wifi network to which the system controlling SpiNNaker must connect and redirects the communication in both directions. Communication to the robot is via input and output pins, while communication to the system with SpiNNaker is direct via the serial port.</p></li>
 		</ul>
 </ul>
 </p>
@@ -81,7 +81,27 @@ python script.py
 
 <h2 name="Usage">Usage</h2>
 <p align="justify">
-Still under construction.
+In order to use the system, you only need to define a set of global variables that define the scenario on which the system will operate and run the script <a href="real_time_map_and_nav_app.py">real_time_map_and_nav_app.py</a>. This script is in charge of instantiating the complete system with the configuration indicated through the variables defined above. Each simulation or demo must be identified by a unique id. The id of the experiment to be reproduced must be indicated at the beginning of the script. It is this number that will be used to distinguish within an if which set of global variables is used in the next execution of the system. These global variables are: 
+</p>
+<p align="justify">
+<ul>
+	<li><p align="justify"><strong>xlength and ylength</strong>: size of the grid map as a function of the number of rows (y-axis) and columns (x-axis).</p></li>
+	<li><p align="justify"><strong>xinit, yinit, xend and yend</strong>: x and y coordinates of the initial and final positions of the robot within the grid map.</p></li>
+	<li><p align="justify"><strong>experimentName</strong>: name of the experiment, used as the base for the name of the generated folders and files.</p></li>
+	<li><p align="justify"><strong>simTime</strong>: duration of the simulation to be performed in miliseconds, in case of real time demo, use a very long duration.</p></li>
+	<li><p align="justify"><strong>obstacles</strong>: the position within the grid map where the obstacles are located in the case of the software simulations or an empty list in the case of the demo.</p></li>
+	<li><p align="justify"><strong>robotDirection</strong>: initial direction in which the robot is facing from a top-down perspective (0 = top, 1 = left, 2 = bottom, 4 = right).</p></li>
+	<li><p align="justify"><strong>maxMoveTime</strong>: variable indicating the maximum time needed for the robot to move from one cell to another, taking into account turning times. It is only used for the real time demo.</p></li>
+</ul>
+</p>
+<p align="justify">
+There are other global variables that can be set, following the declaration of the experiment, however, it is recommended to leave them as default.
+</p>
+<p align="justify">
+In the case of a software simulation, nothing more would need to be done, however, in the case of a demo on the robot, it would be necessary to have the robotic platform ready to send and receive the indicated commands. To reproduce the demo presented in the paper, a Romeo BLE board was used to control the hardware system and an Adafruit ESP32 Feather board for wifi communication. In case you want your own robotic platforms, you will have to adapt the code from the repository available in the <a href="robot/">robot</a> folder.
+</p>
+<p align="justify">
+In both cases, after the end of the experiment, the relevant data from the simulation will be returned as a set of files under the folder with the name of the experiment. These files can then be used in the script called <a href="plot.py">plot.py</a> to generate the desired plots.
 </p>
 
 
