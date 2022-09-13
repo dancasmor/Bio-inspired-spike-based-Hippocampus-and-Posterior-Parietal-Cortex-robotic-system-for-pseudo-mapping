@@ -14,11 +14,11 @@ import os
 #   + 1  -> Test 1: 4x4 map with 1 obstacle in the path
 #   + 2  -> Test 2: 6x6 map with various obstacle in the map
 #   + 3  -> Test 3: 6x6 map with various obstacle in the map blocking the manhattan possible paths
-experiment = 2
+experiment = 3
 # If create map plots
-plotMap = False
+plotMap = True
 # If create spikes plots
-plotSpikes = True
+plotSpikes = False
 
 # Robot demo: test 1 with a real robot
 if experiment == 0:
@@ -379,6 +379,12 @@ elif experiment == 3:
     experimentName = "test6x6complex"
     # Positions (cellY * xlength + cellX + 1) with obstacle
     obstacles = [5, 9, 12, 15, 21, 23, 28, 30]
+    # No other middle maps
+    baseTitle = ""
+    mapsTitle = []
+    mapsToPlot = {}
+    finalIteration = ""
+
 
 
 #############################################
@@ -571,9 +577,9 @@ def main():
     # Initialize global params that not depends on the user
     init_global_params()
 
-    # List of maps -> only experiments 1 and 2
+    # List of maps -> only experiments 1, 2 and 3
     if plotMap:
-        if experiment >= 1 and experiment <= 2:
+        if experiment >= 1 and experiment <= 3:
             # + Initial map
             initial_map = read_file("initial_map.txt")
             map_state_to_color_map(initial_map, baseTitle + " 0 - Initial map", "0_initial_map")
