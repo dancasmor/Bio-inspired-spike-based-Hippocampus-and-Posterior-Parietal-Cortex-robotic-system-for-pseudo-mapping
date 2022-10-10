@@ -4,12 +4,12 @@ import matplotlib.pyplot as plt
 import sys
 
 class PPC:
-    def __init__(self, ReadINLayer, ComparisonINLayer, OLayer, numCommands, operationDelay, initialDelay, sim):
+    def __init__(self, ReadINLayer, MatchINLayer, OLayer, numCommands, operationDelay, initialDelay, sim):
         """Constructor method
         """
         # Storing parameters
         self.ReadINLayer = ReadINLayer
-        self.ComparisonINLayer = ComparisonINLayer
+        self.MatchINLayer = MatchINLayer
         self.OLayer = OLayer
         self.sim = sim
         self.numCommands = numCommands
@@ -35,8 +35,8 @@ class PPC:
         # DelayLayer
         self.DelayLayer = self.sim.Population(self.numCommands, self.sim.IF_curr_exp(**self.neuronParameters), label="DelayLayer")
 
-        # ComparisonLayer
-        self.ComparisonLayer = self.sim.Population(self.numCommands, self.sim.IF_curr_exp(**self.neuronParameters), label="ComparisonLayer")
+        # MatchLayer
+        self.MatchLayer = self.sim.Population(self.numCommands, self.sim.IF_curr_exp(**self.neuronParameters), label="MatchLayer")
 
         # InhLayer
         self.InhLayer = self.sim.Population(1, self.sim.IF_curr_exp(**self.neuronParameters), label="InhLayer")
@@ -62,23 +62,23 @@ class PPC:
                                 self.sim.OneToOneConnector(),synapse_type=self.sim.StaticSynapse(weight=6.0, delay=self.operationDelay),
                                 receptor_type="excitatory")
 
-        # DelayLayer-ComparisonLayer -> 1 to 1, excitatory and static
-        self.DelayL_ComparisonL = self.sim.Projection(self.DelayLayer, self.ComparisonLayer, self.sim.OneToOneConnector(),
+        # DelayLayer-MatchLayer -> 1 to 1, excitatory and static
+        self.DelayL_MatchL = self.sim.Projection(self.DelayLayer, self.MatchLayer, self.sim.OneToOneConnector(),
                                                  synapse_type=self.sim.StaticSynapse(weight=2.5, delay=1.0),
                                                  receptor_type="excitatory")
 
-        # ComparisonINLayer-ComparisonLayer -> all to 1 (for each), excitatory and static
+        # MatchINLayer-MatchLayer -> all to 1 (for each), excitatory and static
         for neuronId in range(self.numCommands):
-            self.sim.Projection(self.ComparisonINLayer, self.sim.PopulationView(self.ComparisonLayer, [neuronId]),
+            self.sim.Projection(self.MatchINLayer, self.sim.PopulationView(self.MatchLayer, [neuronId]),
                                 self.sim.AllToAllConnector(allow_self_connections=True),
                                 synapse_type=self.sim.StaticSynapse(weight=2.5, delay=1.0),
                                 receptor_type="excitatory")
 
-        # ComparisonLayer-OLayer -> 1 to 1, excitatory and static
-        self.ComparisonL_OL = self.sim.Projection(self.ComparisonLayer, self.OLayer,
-                                                      self.sim.OneToOneConnector(),
-                                                      synapse_type=self.sim.StaticSynapse(weight=6.0, delay=1.0),
-                                                      receptor_type="excitatory")
+        # MatchLayer-OLayer -> 1 to 1, excitatory and static
+        self.MatchL_OL = self.sim.Projection(self.MatchLayer, self.OLayer,
+                                             self.sim.OneToOneConnector(),
+                                             synapse_type=self.sim.StaticSynapse(weight=6.0, delay=1.0),
+                                             receptor_type="excitatory")
 
         # DelayLayer-InhLayer
         self.DelayL_InhL = self.sim.Projection(self.sim.PopulationView(self.DelayLayer, [self.numCommands-1]), self.InhLayer,
@@ -87,11 +87,11 @@ class PPC:
                                                                                             delay=1.0),
                                                         receptor_type="excitatory")
 
-        # InhLayer-ComparisonLayer
-        self.InhL_ComparisonL = self.sim.Projection(self.InhLayer, self.ComparisonLayer,
-                                                  self.sim.AllToAllConnector(),
-                                                  synapse_type=self.sim.StaticSynapse(weight=6.0, delay=1.0),
-                                                  receptor_type="inhibitory")
+        # InhLayer-MatchLayer
+        self.InhL_MatchL = self.sim.Projection(self.InhLayer, self.MatchLayer,
+                                               self.sim.AllToAllConnector(),
+                                               synapse_type=self.sim.StaticSynapse(weight=6.0, delay=1.0),
+                                               receptor_type="inhibitory")
 
 
 """
@@ -109,7 +109,7 @@ Test:
 
 def test():
     inputReadSpikes = [1, 51, 101, 151]
-    inputCompSpikes = [[11, 68, 125, 182], []]
+    inputMatchSpikes = [[11, 68, 125, 182], []]
     simTime = 200
     operationDelay = 7
     initialDelay = 9
@@ -131,21 +131,21 @@ def test():
     # Input layers
     #  + Read IN
     ReadINLayer = sim.Population(1, sim.SpikeSourceArray(spike_times=inputReadSpikes), label="ReadINLayer")
-    #  + Comparison IN
-    ComparisonINLayer = sim.Population(2, sim.SpikeSourceArray(spike_times=inputCompSpikes), label="ReadINLayer")
+    #  + Match IN
+    MatchINLayer = sim.Population(2, sim.SpikeSourceArray(spike_times=inputMatchSpikes), label="MatchINLayer")
 
     # Output layer: fire a spike when receive a spike
     OLayer = sim.Population(4, sim.IF_curr_exp(**neuronParameters), label="OLayer")
 
     # PPC
-    ppc = PPC(ReadINLayer, ComparisonINLayer, OLayer, 4, operationDelay, initialDelay, sim)
+    ppc = PPC(ReadINLayer, MatchINLayer, OLayer, 4, operationDelay, initialDelay, sim)
 
     ######################################
     # Parameters to store
     ######################################
     OLayer.record(["spikes"])
     ppc.DelayLayer.record(["spikes"])
-    ppc.ComparisonLayer.record(["spikes"])
+    ppc.MatchLayer.record(["spikes"])
     ppc.InhLayer.record(["spikes"])
 
     ######################################
@@ -166,12 +166,12 @@ def test():
     formatSpikesDelay = []
     for neuron in spikesDelay:
         formatSpikesDelay.append(neuron.as_array().tolist())
-    # Comparison
-    ComparisonLData = ppc.ComparisonLayer.get_data(variables=["spikes"])
-    spikesComp = ComparisonLData.segments[0].spiketrains
-    formatSpikesComp = []
-    for neuron in spikesComp:
-        formatSpikesComp.append(neuron.as_array().tolist())
+    # Match selective
+    MatchLData = ppc.MatchLayer.get_data(variables=["spikes"])
+    spikesMatch = MatchLData.segments[0].spiketrains
+    formatSpikesMatch = []
+    for neuron in spikesMatch:
+        formatSpikesMatch.append(neuron.as_array().tolist())
     # Inh
     InhLData = ppc.InhLayer.get_data(variables=["spikes"])
     spikesInh = InhLData.segments[0].spiketrains
@@ -186,15 +186,15 @@ def test():
 
     # Represent information
     print("IN read = " + str(inputReadSpikes))
-    print("IN comp = " + str(inputCompSpikes))
+    print("IN comp = " + str(inputMatchSpikes))
     print("Delay = " + str(formatSpikesDelay))
-    print("Comparison = " + str(formatSpikesComp))
+    print("Match = " + str(formatSpikesMatch))
     print("Inh = " + str(formatSpikesInh))
     print("OUT = " + str(formatSpikesOut))
-    spikes_plot([[inputReadSpikes], inputCompSpikes, formatSpikesDelay, formatSpikesComp, formatSpikesInh, formatSpikesOut],
-                ["INreadPPC", "INcompPPC", "Delay", "Comparison", "Inh", "OUT"],
+    spikes_plot([[inputReadSpikes], inputMatchSpikes, formatSpikesDelay, formatSpikesMatch, formatSpikesInh, formatSpikesOut],
+                ["INreadPPC", "INmatchPPC", "Delay", "Match", "Inh", "OUT"],
                 ["o", "o", "o", "o", "o", "o"], ["goldenrod", "Green", "Red", "darkviolet", "Blue", "Green"],
-                ["INreadPPC", "INcompPPC", "Delay", "Comparison", "Inh", "OUT"], "PPC population spikes",
+                ["INreadPPC", "INmatchPPC", "Delay", "Match", "Inh", "OUT"], "PPC population spikes",
                 "results/", "ppc", False, True)
 
 
