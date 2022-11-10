@@ -4,11 +4,11 @@ import matplotlib.pyplot as plt
 import sys
 
 class PPC:
-    def __init__(self, ReadINLayer, MatchINLayer, OLayer, numCommands, operationDelay, initialDelay, sim):
+    def __init__(self, SearchingINLayer, MatchINLayer, OLayer, numCommands, operationDelay, initialDelay, sim):
         """Constructor method
         """
         # Storing parameters
-        self.ReadINLayer = ReadINLayer
+        self.SearchingINLayer = SearchingINLayer
         self.MatchINLayer = MatchINLayer
         self.OLayer = OLayer
         self.sim = sim
@@ -30,7 +30,7 @@ class PPC:
         self.neuronParameters = {"cm": 0.27, "i_offset": 0.0, "tau_m": 3.0, "tau_refrac": 1.0, "tau_syn_E": 0.3, "tau_syn_I": 0.3,
                                      "v_reset": -60.0, "v_rest": -60.0, "v_thresh": -57.0}
         # ReadLayer
-        self.ReadLayer = self.sim.Population(1, self.sim.IF_curr_exp(**self.neuronParameters), label="ReadLayer")
+        self.InitDelayLayer = self.sim.Population(1, self.sim.IF_curr_exp(**self.neuronParameters), label="SearchingLayer")
 
         # DelayLayer
         self.DelayLayer = self.sim.Population(self.numCommands, self.sim.IF_curr_exp(**self.neuronParameters), label="DelayLayer")
@@ -47,14 +47,14 @@ class PPC:
 
                     :returns:
                 """
-        # ReadINLayer-ReadLayer -> 1 to 1, excitatory and static
-        self.ReadINL_ReadL = self.sim.Projection(self.ReadINLayer, self.ReadLayer, self.sim.OneToOneConnector(),
-            synapse_type=self.sim.StaticSynapse(weight=6, delay=1.0), receptor_type="excitatory")
+        # SearchingINLayer-InitDelayLayer -> 1 to 1, excitatory and static
+        self.SearchingINL_InitDelayL = self.sim.Projection(self.SearchingINLayer, self.InitDelayLayer, self.sim.OneToOneConnector(),
+                                                           synapse_type=self.sim.StaticSynapse(weight=6, delay=1.0), receptor_type="excitatory")
 
-        # ReadLayer-DelayLayer -> 1 to 1 (first neuron), excitatory and static
-        self.ReadL_DelayL = self.sim.Projection(self.ReadLayer, self.sim.PopulationView(self.DelayLayer, [0]), self.sim.OneToOneConnector(),
-                                                 synapse_type=self.sim.StaticSynapse(weight=6.0, delay=self.initialDelay),
-                                                 receptor_type="excitatory")
+        # InitDelayLayer-DelayLayer -> 1 to 1 (first neuron), excitatory and static
+        self.InitDelayL_DelayL = self.sim.Projection(self.InitDelayLayer, self.sim.PopulationView(self.DelayLayer, [0]), self.sim.OneToOneConnector(),
+                                                     synapse_type=self.sim.StaticSynapse(weight=6.0, delay=self.initialDelay),
+                                                     receptor_type="excitatory")
 
         # DelayLayer-DelayLayer -> 1 to 1 (i -> i+1), excitatory and static
         for neuronId in range(self.numCommands-1):
@@ -108,8 +108,8 @@ Test:
 
 
 def test():
-    inputReadSpikes = [1, 51, 101, 151]
-    inputMatchSpikes = [[11, 68, 125, 182], []]
+    inputSearchingSpikes = [1, 51, 101, 151]
+    inputMatchSpikes = [[11, 68], [125, 182]]
     simTime = 200
     operationDelay = 7
     initialDelay = 9
@@ -129,8 +129,8 @@ def test():
                         "v_reset": -60.0, "v_rest": -60.0, "v_thresh": -57.5}
 
     # Input layers
-    #  + Read IN
-    ReadINLayer = sim.Population(1, sim.SpikeSourceArray(spike_times=inputReadSpikes), label="ReadINLayer")
+    #  + Searching IN
+    SearchingINLayer = sim.Population(1, sim.SpikeSourceArray(spike_times=inputSearchingSpikes), label="SearchingINLayer")
     #  + Match IN
     MatchINLayer = sim.Population(2, sim.SpikeSourceArray(spike_times=inputMatchSpikes), label="MatchINLayer")
 
@@ -138,12 +138,13 @@ def test():
     OLayer = sim.Population(4, sim.IF_curr_exp(**neuronParameters), label="OLayer")
 
     # PPC
-    ppc = PPC(ReadINLayer, MatchINLayer, OLayer, 4, operationDelay, initialDelay, sim)
+    ppc = PPC(SearchingINLayer, MatchINLayer, OLayer, 4, operationDelay, initialDelay, sim)
 
     ######################################
     # Parameters to store
     ######################################
     OLayer.record(["spikes"])
+    ppc.InitDelayLayer.record(["spikes"])
     ppc.DelayLayer.record(["spikes"])
     ppc.MatchLayer.record(["spikes"])
     ppc.InhLayer.record(["spikes"])
@@ -160,6 +161,12 @@ def test():
     formatSpikesOut = []
     for neuron in spikesOut:
         formatSpikesOut.append(neuron.as_array().tolist())
+    # Searching
+    InitDelayLData = ppc.InitDelayLayer.get_data(variables=["spikes"])
+    spikesInitDelay= InitDelayLData.segments[0].spiketrains
+    formatSpikesInitDelay = []
+    for neuron in spikesInitDelay:
+        formatSpikesInitDelay.append(neuron.as_array().tolist())
     # Delay
     DelayLData = ppc.DelayLayer.get_data(variables=["spikes"])
     spikesDelay = DelayLData.segments[0].spiketrains
@@ -185,16 +192,17 @@ def test():
     sim.end()
 
     # Represent information
-    print("IN read = " + str(inputReadSpikes))
+    print("IN read = " + str(inputSearchingSpikes))
     print("IN comp = " + str(inputMatchSpikes))
+    print("InitDelay = " + str(formatSpikesInitDelay))
     print("Delay = " + str(formatSpikesDelay))
     print("Match = " + str(formatSpikesMatch))
     print("Inh = " + str(formatSpikesInh))
     print("OUT = " + str(formatSpikesOut))
-    spikes_plot([[inputReadSpikes], inputMatchSpikes, formatSpikesDelay, formatSpikesMatch, formatSpikesInh, formatSpikesOut],
-                ["INreadPPC", "INmatchPPC", "Delay", "Match", "Inh", "OUT"],
-                ["o", "o", "o", "o", "o", "o"], ["goldenrod", "Green", "Red", "darkviolet", "Blue", "Green"],
-                ["INreadPPC", "INmatchPPC", "Delay", "Match", "Inh", "OUT"], "PPC population spikes",
+    spikes_plot([[inputSearchingSpikes], inputMatchSpikes, formatSpikesInitDelay, formatSpikesDelay, formatSpikesMatch, formatSpikesInh, formatSpikesOut],
+                ["INsearchingPPC", "INmatchPPC", "InitDelay", "Delay", "Match", "Inh", "OUT"],
+                ["o", "o", "o", "o", "o", "o", "o"], ["goldenrod", "cyan", "black", "Red", "darkviolet", "Blue", "Green"],
+                ["INreadPPC", "INmatchPPC", "InitDelay", "Delay", "Match", "Inh", "OUT"], "PPC population spikes",
                 "results/", "ppc", False, True)
 
 
