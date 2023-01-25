@@ -1,5 +1,5 @@
 
-from sPyMem import hippocampus_with_forgetting
+from sPyMem.hippocampus_with_forgetting import hippocampus_with_forgetting
 import spynnaker8 as sim
 import math
 import numpy as np

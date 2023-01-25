@@ -1,7 +1,7 @@
 
 import spynnaker8 as sim
 import matplotlib.pyplot as plt
-import sys
+
 
 class PPC:
     def __init__(self, SearchingINLayer, MatchINLayer, OLayer, numCommands, operationDelay, initialDelay, sim):
