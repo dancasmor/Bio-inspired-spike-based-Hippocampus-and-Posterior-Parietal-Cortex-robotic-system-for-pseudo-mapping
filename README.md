@@ -50,7 +50,7 @@ Please go to section <a href="#CiteThisWork">cite this work</a> to learn how to 
 		<li><strong>sPyNNaker8</strong>: last stable version <a href="http://spinnakermanchester.github.io/development/gitinstall.html">compiled from source</a></li>
 		<li><strong>numpy</strong> 1.21.4</li>
 		<li><strong>matplotlib</strong> 3.5.0</li>
-		<li><strong>sPyBlocks</strong>: 0.0.4</li>
+		<li><strong>sPyMem</strong>: 0.0.4</li>
 	</ul>
 </ol>
 </p>
