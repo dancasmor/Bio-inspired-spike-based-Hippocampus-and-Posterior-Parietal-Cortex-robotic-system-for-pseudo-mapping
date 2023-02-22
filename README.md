@@ -55,10 +55,7 @@ Please go to section <a href="#CiteThisWork">cite this work</a> to learn how to 
 </ol>
 </p>
 <p align="justify">
-To run any script, follow the python nomenclature: 
-<code>
-python script.py
-</code>
+To run any script, follow the python nomenclature: <code>python script.py</code>
 </p>
 
 
