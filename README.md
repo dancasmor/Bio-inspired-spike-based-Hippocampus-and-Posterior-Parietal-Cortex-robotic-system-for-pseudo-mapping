@@ -30,9 +30,9 @@ Please go to section <a href="#CiteThisWork">cite this work</a> to learn how to 
 <p align="justify">
 <strong>Title</strong>: Bio-inspired spike-based Hippocampus and Posterior Parietal Cortex robotic system for environment pseudo-mapping and navigation
 
-<strong>Abstract</strong>: 
+<strong>Abstract</strong>: The brain has a great capacity for computation, adaptability and efficient resolution of complex problems, far surpassing modern computers. In this regard, neuromorphic engineering seeks to mimic the basic principles of the brain to develop systems capable of achieving such capabilities. In the neuromorphic field, navigation systems are of great interest due to their potential applicability to robotics, although this systems are still a challenge to be solved. Navigation is possible due to the activity of differrent regions, such as the hippocampus and the Posterior Parietal Cortex. In this work, we propose a spike-based robotic navigation and environment pseudomapping system. This system is formed by a bio-inspired hippocampal memory model connected to a bio-inspired PPC model. The hippocampal memory is in charge of maintaining a representation of a state map of the environment, and the PPC is in charge of local decision-making. This system was implemented on the SpiNNaker hardware platform using Spiking Neural Networks. A set of real-time experiments was applied to demonstrate the correct functioning of the system components and the complete system in virtual and physical environments on a robotic platform. The system is able to navigate through the environment to reach a goal position starting from an initial position, avoiding obstacles and mapping the environment. To the best of the authors knowledge we propose the first implementation of an environment pseudo-mapping system with dynamic learning based on a bio-inspired spiking hippocampal memory.
 
-<strong>Keywords</strong>: 
+<strong>Keywords</strong>: spatial navigation, environment state map, Spiking Neural Networks, Hippocampus, Posterior Parietal Cortex, Neuromorphic engineering, SpiNNaker
 
 <strong>Author</strong>: Daniel Casanueva-Morato
 
