@@ -2,7 +2,7 @@
 
 <h2 name="Description">Description</h2>
 <p align="justify">
-Code on which the paper entitled "Bio-inspired spike-based Hippocampus and Posterior Parietal Cortex robotic system for environment pseudo-mapping and navigation" is based, sent to a journal and awaiting review.
+Code on which the paper entitled "Bio-inspired spike-based Hippocampus and Posterior Parietal Cortex robotic system for environment pseudo-mapping and navigation" is based, published in Advanced Intelligent Systems journal.
 </p>
 <p align="justify">
 A functional robotic system bio-inspired on Hippocampus and Posterior Parietal Cortex cerebral areas for environment pseudo-mapping and navigation implemented on the <a href="https://apt.cs.manchester.ac.uk/projects/SpiNNaker/">SpiNNaker</a> hardware platform using the technology of the Spiking Neuronal Network (SNN) is presented. The code is written in Python and makes use of the PyNN library and their adaptation for SpiNNaker called <a href="https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjaxOCWhrn3AhVL1BoKHVtQDvsQFnoECAkQAQ&url=https%3A%2F%2Fgithub.com%2FSpiNNakerManchester%2FsPyNNaker&usg=AOvVaw3e3TBMJ-08yBqtsKza_RiE">sPyNNaker</a>. Not only software tests of the system were carried out, but also a demo on a robotic platform based on a 2-wheeled car. In addition, the necessary scripts to replicate the tests, robotic demo and plots carried out in the paper are included, together with data and plots of these tests and demo.
@@ -47,7 +47,7 @@ Please go to section <a href="#CiteThisWork">cite this work</a> to learn how to 
 	<li>Python version 3.8.10</li>
 	<li>Python libraries:</li>
 	<ul>
-		<li><strong>sPyNNaker8</strong>: last stable version <a href="http://spinnakermanchester.github.io/development/gitinstall.html">compiled from source</a></li>
+		<li><strong>sPyNNaker</strong></li>
 		<li><strong>numpy</strong> 1.21.4</li>
 		<li><strong>matplotlib</strong> 3.5.0</li>
 		<li><strong>sPyMem</strong>: 0.0.4</li>
@@ -104,7 +104,16 @@ In both cases, after the end of the experiment, the relevant data from the simul
 
 <h2 name="CiteThisWork">Cite this work</h2>
 <p align="justify">
-Still under construction.
+<b>APA</b>: Casanueva-Morato, D., Ayuso-Martinez, A., Dominguez-Morales, J.P., Jimenez-Fernandez, A., Jimenez-Moreno, G. and Perez-Peña, F. (2023), Bioinspired Spike-Based Hippocampus and Posterior Parietal Cortex Models for Robot Navigation and Environment Pseudomapping. Adv. Intell. Syst. 2300132. https://doi.org/10.1002/aisy.202300132
+</p>
+<p align="justify">
+<b>BibTeX</b>: @article{https://doi.org/10.1002/aisy.202300132,
+	author = {Casanueva-Morato, Daniel and Ayuso-Martinez, Alvaro and Dominguez-Morales, Juan P. and Jimenez-Fernandez, Angel and Jimenez-Moreno, Gabriel and Perez-Peña, Fernando},
+	title = {Bioinspired Spike-Based Hippocampus and Posterior Parietal Cortex Models for Robot Navigation and Environment Pseudomapping},
+	journal = {Advanced Intelligent Systems},
+	pages = {2300132},
+	doi = {https://doi.org/10.1002/aisy.202300132}
+}
 </p>
 
 
@@ -112,7 +121,7 @@ Still under construction.
 <p align="justify">
 The author of the original idea is Daniel Casanueva-Morato while working on a research project of the <a href="http://www.rtc.us.es/">RTC Group</a>.
 
-This research was partially supported by the Spanish grant MINDROB (PID2019-105556GB-C33/AEI/10.13039/501100011033). 
+This research was partially supported by the CHIST-ERA H2020 grant SMALL (CHIST-ERA-18-ACAI-004, PCI2019-111841-2/AEI/10.13039/501100011033 and by project PID2019-105556GB-C33 funded by MCIN/ AEI /10.13039/501100011033.
 
 D. C.-M. was supported by a "Formación de Profesor Universitario" Scholarship from the Spanish Ministry of Education, Culture and Sport.
 </p>
