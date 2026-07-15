@@ -34,7 +34,7 @@ Please go to section <a href="#CiteThisWork">cite this work</a> to learn how to 
 
 <strong>Keywords</strong>: spatial navigation, environment state map, Spiking Neural Networks, Hippocampus, Posterior Parietal Cortex, Neuromorphic engineering, SpiNNaker
 
-<strong>Author</strong>: Gabriel Jiménez Moreno
+<strong>Author</strong>: Daniel Casanueva-Morato
 
 <strong>Contact</strong>: dcasanueva@us.es
 </p>
